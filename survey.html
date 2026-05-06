@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>AIBC共赢社 AI供需调研</title>
+    <link rel="stylesheet" href="./survey.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">AIBC共赢社 · AI供需调研</p>
+          <h1>把需求、能力和资源讲清楚，匹配才会真正发生。</h1>
+          <p class="lead">
+            这份调研会根据您的角色动态展开问题。我们只问后续撮合需要判断的关键信息：谁适合谁、适合怎么合作、现在是否值得推进。
+          </p>
+        </div>
+        <aside class="promise">
+          <strong>预计 6-10 分钟</strong>
+          <span>数据进入 AIBC 飞书多维表格，用于内部审核、标签化和供需撮合。</span>
+        </aside>
+      </header>
+
+      <section class="app" aria-live="polite">
+        <nav class="steps" id="steps"></nav>
+        <form class="card" id="survey-form">
+          <div id="form-root"></div>
+          <div class="actions">
+            <button class="ghost" type="button" id="prev-btn">上一步</button>
+            <button class="primary" type="button" id="next-btn">下一步</button>
+            <button class="primary" type="submit" id="submit-btn">提交调研</button>
+          </div>
+          <p class="status" id="status" role="alert"></p>
+        </form>
+      </section>
+
+      <footer class="footer">
+        <span>信息仅用于 AIBC共赢社内部供需匹配，可随时联系 AI奶爸申请删除或更新。</span>
+        <span>微信：ZST321456</span>
+      </footer>
+    </main>
+
+    <script src="./survey.js" type="module"></script>
+  </body>
+</html>

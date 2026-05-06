@@ -1,0 +1,11 @@
+{
+  "name": "aibc-questionnaire-entry",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "check": "node --check api/submit.js && node --check survey.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
