@@ -15,6 +15,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 body {
   min-height: 100vh;
   margin: 0;
@@ -120,6 +124,10 @@ h1 {
   margin-top: 22px;
 }
 
+.app.intro-mode {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .steps,
 .card {
   border: 1px solid var(--line);
@@ -205,10 +213,6 @@ h1 {
   cursor: pointer;
 }
 
-.roles .role-card:last-child {
-  grid-column: 1 / -1;
-}
-
 .role-card input,
 .option input {
   position: absolute;
@@ -265,6 +269,65 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.78);
+}
+
+.intro-auth {
+  display: grid;
+  gap: 22px;
+}
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.intro-grid article {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #fff;
+}
+
+.intro-grid strong,
+.auth-check span,
+.other-field label {
+  font: 700 15px/1.55 "PingFang SC", sans-serif;
+}
+
+.intro-grid span {
+  color: var(--muted);
+  font: 14px/1.7 "PingFang SC", sans-serif;
+}
+
+.auth-check {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 16px;
+  border: 1px solid rgba(13, 118, 104, 0.22);
+  border-radius: 20px;
+  background: rgba(13, 118, 104, 0.08);
+}
+
+.auth-check input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: var(--accent);
+}
+
+.other-field {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px dashed rgba(13, 118, 104, 0.35);
+  border-radius: 16px;
+  background: rgba(13, 118, 104, 0.06);
 }
 
 .question label.title {
@@ -437,6 +500,10 @@ button:disabled {
 
   .hero,
   .app {
+    grid-template-columns: 1fr;
+  }
+
+  .intro-grid {
     grid-template-columns: 1fr;
   }
 

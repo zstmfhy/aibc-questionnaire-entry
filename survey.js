@@ -14,11 +14,6 @@ const roles = [
     subtitle: "我能提供AI产品、技术、咨询、交付、培训或行业方案。",
   },
   {
-    id: "both",
-    title: "供需两者",
-    subtitle: "我既有业务需求，也有能力或产品可以对外输出。",
-  },
-  {
     id: "resource",
     title: "资源方",
     subtitle: "我提供资金、渠道、客户、算力、数据、园区、政策或媒体资源。",
@@ -278,10 +273,6 @@ const finalQuestions = [
     options: ["同意展示行业、城市、能力/需求标签", "不同意，仅允许运营私下撮合"],
   }),
   q("notes", "其他建议或补充", "textarea"),
-  q("consent", "信息确认", "checkbox", {
-    required: true,
-    options: ["我确认填写信息真实有效，并同意AIBC共赢社用于内部供需匹配"],
-  }),
 ];
 
 const sections = {
@@ -289,7 +280,7 @@ const sections = {
     id: "role",
     kicker: "Step 01",
     title: "先确认您的身份",
-    desc: "后续问题会根据身份动态变化。若您既有需求也能提供服务，请选择供需两者。",
+    desc: "后续问题会根据身份动态变化。请选择当前最主要的身份，方便运营做精准标签化。",
   },
   common: {
     id: "common",
@@ -338,6 +329,7 @@ const sections = {
 let state = loadDraft();
 let activeIndex = 0;
 
+const app = document.querySelector(".app");
 const form = document.querySelector("#survey-form");
 const root = document.querySelector("#form-root");
 const stepsEl = document.querySelector("#steps");
@@ -373,6 +365,17 @@ prevBtn.addEventListener("click", () => {
 
 nextBtn.addEventListener("click", () => {
   status("");
+  if (!state.authorized) {
+    if (!state.introConsent) {
+      status("请先勾选授权确认，再开始填写。");
+      return;
+    }
+    state.authorized = true;
+    activeIndex = 0;
+    saveDraft();
+    render();
+    return;
+  }
   const active = getActiveSections()[activeIndex];
   const errors = validateSection(active);
   if (errors.length) {
@@ -395,9 +398,16 @@ function q(id, label, type, config = {}) {
 
 function loadDraft() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { role: "", answers: {} };
+    const draft = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    if (draft.role === "both") draft.role = "";
+    return {
+      authorized: Boolean(draft.authorized),
+      introConsent: Boolean(draft.introConsent),
+      role: draft.role || "",
+      answers: draft.answers || {},
+    };
   } catch {
-    return { role: "", answers: {} };
+    return { authorized: false, introConsent: false, role: "", answers: {} };
   }
 }
 
@@ -408,8 +418,8 @@ function saveDraft() {
 function getActiveSections() {
   const items = [sections.role];
   if (state.role) items.push(sections.common);
-  if (state.role === "demand" || state.role === "both") items.push(sections.demand);
-  if (state.role === "supply" || state.role === "both") items.push(sections.supply);
+  if (state.role === "demand") items.push(sections.demand);
+  if (state.role === "supply") items.push(sections.supply);
   if (state.role === "resource") items.push(sections.resource);
   if (state.role === "observer") items.push(sections.observer);
   if (state.role) items.push(sections.final);
@@ -417,6 +427,13 @@ function getActiveSections() {
 }
 
 function render() {
+  if (!state.authorized) {
+    renderIntroPage();
+    return;
+  }
+
+  app.classList.remove("intro-mode");
+  stepsEl.hidden = false;
   const activeSections = getActiveSections();
   activeIndex = Math.min(activeIndex, activeSections.length - 1);
   renderSteps(activeSections);
@@ -424,7 +441,47 @@ function render() {
   prevBtn.disabled = false;
   prevBtn.style.display = activeIndex === 0 ? "none" : "inline-flex";
   nextBtn.style.display = activeIndex === activeSections.length - 1 ? "none" : "inline-flex";
+  nextBtn.textContent = "下一步";
   submitBtn.style.display = activeIndex === activeSections.length - 1 && state.role ? "inline-flex" : "none";
+  status("");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderIntroPage() {
+  app.classList.add("intro-mode");
+  stepsEl.hidden = true;
+  stepsEl.innerHTML = "";
+  root.innerHTML = `
+    <section class="intro-auth">
+      <p class="section-kicker">开始前确认</p>
+      <h2 class="section-title">请先了解调研目的，并授权用于内部撮合</h2>
+      <p class="section-desc">
+        这不是公开报名表，而是 AIBC共赢社的供需匹配调研。我们会把您填写的信息用于内部审核、标签化、人工撮合和后续匹配跟进。
+      </p>
+      <div class="intro-grid">
+        <article>
+          <strong>我们会收集什么</strong>
+          <span>身份角色、联系方式、业务需求、AI能力、资源边界、合作偏好和匹配授权。</span>
+        </article>
+        <article>
+          <strong>我们如何使用</strong>
+          <span>用于运营人员判断匹配优先级，向合适的供需双方做一对一推荐或拉群介绍。</span>
+        </article>
+        <article>
+          <strong>我们不会做什么</strong>
+          <span>不会公开完整联系方式，不会未经授权对外展示敏感信息，不会出售或外泄数据。</span>
+        </article>
+      </div>
+      <label class="auth-check">
+        <input type="checkbox" name="introConsent" ${state.introConsent ? "checked" : ""} />
+        <span>我已阅读并同意将填写信息用于 AIBC共赢社内部供需匹配、标签化和运营跟进。</span>
+      </label>
+    </section>
+  `;
+  prevBtn.style.display = "none";
+  nextBtn.style.display = "inline-flex";
+  nextBtn.textContent = "同意授权，开始填写";
+  submitBtn.style.display = "none";
   status("");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -500,6 +557,7 @@ function renderControl(question, value) {
   }
   if (question.type === "radio" || question.type === "checkbox") {
     const values = Array.isArray(value) ? value : [value];
+    const showOther = hasOtherOption(question) && values.includes("其他");
     return `
       <div class="options">
         ${question.options
@@ -514,14 +572,45 @@ function renderControl(question, value) {
           })
           .join("")}
       </div>
+      ${
+        showOther
+          ? `<div class="other-field">
+              <label for="${question.id}__other">请补充说明“其他” <span class="required">*</span></label>
+              <input id="${question.id}__other" name="${question.id}__other" type="text" value="${escapeHtml(state.answers[`${question.id}__other`] || "")}" placeholder="请填写其他内容..." />
+            </div>`
+          : ""
+      }
     `;
   }
   return `<input id="${question.id}" name="${question.id}" type="${question.type}" value="${escapeHtml(value)}" placeholder="请填写..." />`;
 }
 
+function allQuestions() {
+  return Object.values(sections).flatMap((section) => section.questions || []);
+}
+
+function findQuestion(id) {
+  return allQuestions().find((question) => question.id === id);
+}
+
+function hasOtherOption(question) {
+  return Array.isArray(question.options) && question.options.includes("其他");
+}
+
+function isOtherSelected(question) {
+  const value = state.answers[question.id];
+  return Array.isArray(value) ? value.includes("其他") : value === "其他";
+}
+
 function handleInput(event) {
   const target = event.target;
   if (!target.name) return;
+
+  if (target.name === "introConsent") {
+    state.introConsent = target.checked;
+    saveDraft();
+    return;
+  }
 
   if (target.name === "role") {
     state.role = target.value;
@@ -531,11 +620,23 @@ function handleInput(event) {
     return;
   }
 
+  if (target.name.endsWith("__other")) {
+    state.answers[target.name] = target.value;
+    saveDraft();
+    return;
+  }
+
   if (target.type === "checkbox") {
+    const question = findQuestion(target.name);
+    const hadOther = question ? isOtherSelected(question) : false;
     const selected = [...root.querySelectorAll(`input[name="${cssEscape(target.name)}"]:checked`)].map((item) => item.value);
     state.answers[target.name] = selected;
+    if (question && hasOtherOption(question) && hadOther !== selected.includes("其他")) render();
   } else if (target.type === "radio") {
+    const question = findQuestion(target.name);
+    const hadOther = question ? isOtherSelected(question) : false;
     state.answers[target.name] = target.value;
+    if (question && hasOtherOption(question) && hadOther !== (target.value === "其他")) render();
   } else {
     state.answers[target.name] = target.value;
   }
@@ -548,10 +649,12 @@ function validateSection(section) {
   }
   const errors = [];
   for (const question of section.questions || []) {
-    if (!question.required) continue;
     const value = state.answers[question.id];
     const empty = Array.isArray(value) ? value.length === 0 : !String(value || "").trim();
-    if (empty) errors.push(`请填写：${question.label}`);
+    if (question.required && empty) errors.push(`请填写：${question.label}`);
+    if (hasOtherOption(question) && isOtherSelected(question) && !String(state.answers[`${question.id}__other`] || "").trim()) {
+      errors.push(`请补充说明：${question.label} 的“其他”内容`);
+    }
   }
   return errors;
 }
@@ -601,6 +704,7 @@ function buildPayload() {
     submittedAt: new Date().toISOString(),
     role: state.role,
     roleLabel: roles.find((role) => role.id === state.role)?.title || state.role,
+    introConsent: state.introConsent,
     answers: state.answers,
     sourcePage: window.location.href,
     userAgent: navigator.userAgent,

@@ -64,14 +64,14 @@ function validatePayload(body) {
   if (!body.submissionId || !body.role || !body.answers) {
     throw publicError(400, "提交内容不完整");
   }
+  if (body.introConsent !== true) {
+    throw publicError(400, "请确认信息授权后再提交");
+  }
   const answers = body.answers;
   for (const field of ["name", "wechat", "city", "decision_context", "matching_willingness", "public_profile"]) {
     if (!answers[field] || String(answers[field]).trim() === "") {
       throw publicError(400, "请补充必填项后再提交");
     }
-  }
-  if (!Array.isArray(answers.consent) || answers.consent.length === 0) {
-    throw publicError(400, "请确认信息授权后再提交");
   }
 }
 
@@ -88,7 +88,7 @@ function buildFeishuFields(body) {
     "公司/组织": clean(answers.org),
     "职位/身份": clean(answers.title || answers.decision_context),
     所在城市: clean(answers.city),
-    所属行业: join(answers.industry),
+    所属行业: join(withOther(answers, "industry")),
     当前阶段: clean(
       answers["demand.stage"] ||
         answers["supply.capacity"] ||
@@ -99,11 +99,11 @@ function buildFeishuFields(body) {
     能力摘要: clean([answers["supply.offer_summary"], answers["supply.cases"], answers["supply.differentiator"]].filter(Boolean).join("\n")),
     资源摘要: clean([answers["resource.description"], answers["resource.scale"], answers["resource.expected_return"]].filter(Boolean).join("\n")),
     关键标签: join([
-      ...arr(answers["demand.capabilities"]),
-      ...arr(answers["supply.capabilities"]),
-      ...arr(answers["resource.types"]),
-      ...arr(answers["observer.interests"]),
-      ...arr(answers["supply.industries"]),
+      ...withOther(answers, "demand.capabilities"),
+      ...withOther(answers, "supply.capabilities"),
+      ...withOther(answers, "resource.types"),
+      ...withOther(answers, "observer.interests"),
+      ...withOther(answers, "supply.industries"),
     ]),
     "预算/合作规模": clean(answers["demand.budget"] || answers["supply.min_budget"] || answers["resource.scale"]),
     "紧急度/时间窗口": clean(answers["demand.timeline"] || answers["resource.time_window"] || answers["supply.cycle"]),
@@ -160,6 +160,15 @@ function mustEnv(name) {
 
 function arr(value) {
   return Array.isArray(value) ? value : value ? [value] : [];
+}
+
+function withOther(answers, key) {
+  return arr(answers[key]).map((item) => {
+    if (item === "其他" && answers[`${key}__other`]) {
+      return `其他：${answers[`${key}__other`]}`;
+    }
+    return item;
+  });
 }
 
 function join(value) {
