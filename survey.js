@@ -1,5 +1,6 @@
 const STORAGE_KEY = "aibc-survey-draft-v1";
 const API_ENDPOINT = window.AIBC_SURVEY_API_ENDPOINT || "/api/submit";
+const IS_STATIC_PREVIEW = location.hostname.endsWith("github.io") && !window.AIBC_SURVEY_API_ENDPOINT;
 
 const roles = [
   {
@@ -344,7 +345,11 @@ const prevBtn = document.querySelector("#prev-btn");
 const nextBtn = document.querySelector("#next-btn");
 const submitBtn = document.querySelector("#submit-btn");
 const statusEl = document.querySelector("#status");
+const previewBanner = document.querySelector("#preview-banner");
 
+if (previewBanner && IS_STATIC_PREVIEW) {
+  previewBanner.hidden = false;
+}
 render();
 
 form.addEventListener("submit", async (event) => {
@@ -551,6 +556,10 @@ function validateSection(section) {
 }
 
 async function submitSurvey() {
+  if (IS_STATIC_PREVIEW) {
+    status("当前是静态预览页，提交接口尚未部署；请部署后端后再正式收集。");
+    return;
+  }
   const payload = buildPayload();
   submitBtn.disabled = true;
   status("正在提交，请稍候...");
