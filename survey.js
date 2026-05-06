@@ -330,6 +330,7 @@ let state = loadDraft();
 let activeIndex = 0;
 
 const app = document.querySelector(".app");
+const hero = document.querySelector("#hero");
 const form = document.querySelector("#survey-form");
 const root = document.querySelector("#form-root");
 const stepsEl = document.querySelector("#steps");
@@ -432,6 +433,7 @@ function render() {
     return;
   }
 
+  hero.hidden = true;
   app.classList.remove("intro-mode");
   stepsEl.hidden = false;
   const activeSections = getActiveSections();
@@ -448,6 +450,7 @@ function render() {
 }
 
 function renderIntroPage() {
+  hero.hidden = false;
   app.classList.add("intro-mode");
   stepsEl.hidden = true;
   stepsEl.innerHTML = "";
