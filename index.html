@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>AIBC共赢社供需匹配问卷入口</title>
+    <style>
+      :root {
+        --ink: #17212b;
+        --muted: #667085;
+        --line: rgba(23, 33, 43, 0.12);
+        --paper: rgba(255, 255, 255, 0.84);
+        --card: #ffffff;
+        --accent: #0f7c68;
+        --accent-2: #f2a900;
+        --accent-3: #17324d;
+        --shadow: 0 24px 80px rgba(23, 33, 43, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        font-family:
+          "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
+          serif;
+        background:
+          radial-gradient(circle at top left, rgba(15, 124, 104, 0.22), transparent 34rem),
+          radial-gradient(circle at 90% 20%, rgba(242, 169, 0, 0.24), transparent 28rem),
+          linear-gradient(135deg, #f7f1e5 0%, #edf4ef 52%, #f8faf8 100%);
+      }
+
+      body::before {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        content: "";
+        opacity: 0.38;
+        background-image:
+          linear-gradient(rgba(23, 33, 43, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(23, 33, 43, 0.06) 1px, transparent 1px);
+        background-size: 34px 34px;
+        mask-image: linear-gradient(to bottom, #000, transparent 88%);
+      }
+
+      main {
+        width: min(1040px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 40px 0 56px;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: clamp(28px, 5vw, 56px);
+        border: 1px solid var(--line);
+        border-radius: 32px;
+        background: var(--paper);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(18px);
+      }
+
+      .hero::after {
+        position: absolute;
+        right: -82px;
+        bottom: -96px;
+        width: 260px;
+        height: 260px;
+        border: 42px solid rgba(15, 124, 104, 0.16);
+        border-radius: 50%;
+        content: "";
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 12px;
+        border: 1px solid rgba(15, 124, 104, 0.2);
+        border-radius: 999px;
+        color: var(--accent);
+        font: 600 14px/1.2 "PingFang SC", "Hiragino Sans GB", sans-serif;
+        background: rgba(15, 124, 104, 0.08);
+      }
+
+      h1 {
+        max-width: 760px;
+        margin: 22px 0 14px;
+        font-size: clamp(34px, 7vw, 70px);
+        line-height: 0.98;
+        letter-spacing: -0.06em;
+      }
+
+      .intro {
+        max-width: 720px;
+        margin: 0;
+        color: var(--muted);
+        font: 18px/1.8 "PingFang SC", "Hiragino Sans GB", sans-serif;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+        font: 14px/1.2 "PingFang SC", "Hiragino Sans GB", sans-serif;
+      }
+
+      .meta span {
+        padding: 9px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+      }
+
+      .panel {
+        margin-top: 22px;
+        padding: clamp(18px, 3vw, 28px);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: 0 16px 60px rgba(23, 33, 43, 0.1);
+      }
+
+      .panel h2 {
+        margin: 0 0 6px;
+        font-size: clamp(22px, 3vw, 32px);
+        letter-spacing: -0.04em;
+      }
+
+      .hint {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font: 15px/1.7 "PingFang SC", "Hiragino Sans GB", sans-serif;
+      }
+
+      .roles {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .role {
+        position: relative;
+        display: block;
+        min-height: 136px;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        cursor: pointer;
+        background: var(--card);
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      .role input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .role strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 20px;
+        letter-spacing: -0.03em;
+      }
+
+      .role span {
+        display: block;
+        color: var(--muted);
+        font: 14px/1.65 "PingFang SC", "Hiragino Sans GB", sans-serif;
+      }
+
+      .role::after {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(23, 33, 43, 0.22);
+        border-radius: 50%;
+        content: "";
+      }
+
+      .role:has(input:checked) {
+        transform: translateY(-2px);
+        border-color: rgba(15, 124, 104, 0.62);
+        box-shadow: 0 18px 42px rgba(15, 124, 104, 0.14);
+      }
+
+      .role:has(input:checked)::after {
+        border-color: var(--accent);
+        background:
+          radial-gradient(circle, var(--accent) 0 42%, transparent 46%),
+          #fff;
+      }
+
+      .role:hover {
+        transform: translateY(-2px);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-top: 22px;
+      }
+
+      button {
+        min-width: 180px;
+        padding: 15px 22px;
+        border: 0;
+        border-radius: 999px;
+        color: #fff;
+        font: 700 16px/1 "PingFang SC", "Hiragino Sans GB", sans-serif;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--accent), var(--accent-3));
+        box-shadow: 0 16px 28px rgba(15, 124, 104, 0.24);
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+        box-shadow: none;
+      }
+
+      .status {
+        min-height: 24px;
+        margin: 0;
+        color: #b42318;
+        font: 14px/1.6 "PingFang SC", "Hiragino Sans GB", sans-serif;
+      }
+
+      .footer {
+        margin-top: 18px;
+        color: var(--muted);
+        font: 13px/1.8 "PingFang SC", "Hiragino Sans GB", sans-serif;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          width: min(100% - 22px, 1040px);
+          padding-top: 14px;
+        }
+
+        .hero,
+        .panel {
+          border-radius: 24px;
+        }
+
+        .roles {
+          grid-template-columns: 1fr;
+        }
+
+        .role {
+          min-height: auto;
+          padding-right: 54px;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero" aria-labelledby="title">
+        <div class="eyebrow">AIBC共赢社 · AI资源供需匹配</div>
+        <h1 id="title">先选择身份，再进入对应问卷</h1>
+        <p class="intro">
+          本入口用于精准链接社群内的AI资源供需双方。请选择最符合您的角色，系统会跳转到对应的短问卷，避免填写无关问题。
+        </p>
+        <div class="meta" aria-label="问卷说明">
+          <span>预计填写 5-8 分钟</span>
+          <span>信息仅用于社群内部撮合</span>
+          <span>提交后 3 个工作日内初步标签化</span>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="role-title">
+        <h2 id="role-title">请选择您的角色</h2>
+        <p class="hint">如果您既有需求也能提供服务，请选择「供需两者」。</p>
+
+        <form id="entry-form">
+          <div class="roles">
+            <label class="role">
+              <input
+                type="radio"
+                name="role"
+                value="https://uz9e9pqslc.feishu.cn/share/base/shrcncym5plORWdGRKMyqVGdQ7e"
+              />
+              <strong>需求方</strong>
+              <span>我正在寻找AI产品、服务或解决方案，希望对接靠谱供应商。</span>
+            </label>
+
+            <label class="role">
+              <input
+                type="radio"
+                name="role"
+                value="https://uz9e9pqslc.feishu.cn/share/base/shrcnnOoxexxIWAk5fqAIaDAEhc"
+              />
+              <strong>供给方</strong>
+              <span>我提供AI技术、产品、服务或咨询，希望获得真实项目线索。</span>
+            </label>
+
+            <label class="role">
+              <input
+                type="radio"
+                name="role"
+                value="https://uz9e9pqslc.feishu.cn/share/base/shrcnY4emiAAT92PePfXRwbQMOc"
+              />
+              <strong>供需两者</strong>
+              <span>我既有AI需求，也具备能力输出，希望同时登记供需信息。</span>
+            </label>
+
+            <label class="role">
+              <input
+                type="radio"
+                name="role"
+                value="https://uz9e9pqslc.feishu.cn/share/base/shrcnY0wIbzYv5ZDXDaY224MWXc"
+              />
+              <strong>资源方</strong>
+              <span>我提供资金、渠道、算力、数据、客户资源等非技术资源。</span>
+            </label>
+
+            <label class="role">
+              <input
+                type="radio"
+                name="role"
+                value="https://uz9e9pqslc.feishu.cn/share/base/shrcnpnwhh8frIQ61EAaqIkwB6f"
+              />
+              <strong>观望/基础登记</strong>
+              <span>我想先了解生态，暂时没有明确需求或供给方向。</span>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button type="submit">进入对应问卷</button>
+            <p class="status" id="status" role="alert"></p>
+          </div>
+        </form>
+
+        <p class="footer">提交后建议添加AI奶爸微信：ZST321456，备注：AIBC+您的姓名。</p>
+      </section>
+    </main>
+
+    <script>
+      const form = document.querySelector("#entry-form");
+      const status = document.querySelector("#status");
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const selected = new FormData(form).get("role");
+        if (!selected) {
+          status.textContent = "请先选择一个角色，再进入问卷。";
+          return;
+        }
+        status.textContent = "正在跳转...";
+        window.location.href = selected;
+      });
+    </script>
+  </body>
+</html>
