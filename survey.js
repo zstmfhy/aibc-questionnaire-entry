@@ -421,7 +421,8 @@ function render() {
   activeIndex = Math.min(activeIndex, activeSections.length - 1);
   renderSteps(activeSections);
   renderSection(activeSections[activeIndex]);
-  prevBtn.disabled = activeIndex === 0;
+  prevBtn.disabled = false;
+  prevBtn.style.display = activeIndex === 0 ? "none" : "inline-flex";
   nextBtn.style.display = activeIndex === activeSections.length - 1 ? "none" : "inline-flex";
   submitBtn.style.display = activeIndex === activeSections.length - 1 && state.role ? "inline-flex" : "none";
   status("");

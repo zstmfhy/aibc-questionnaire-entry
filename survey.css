@@ -82,9 +82,9 @@ body {
 h1 {
   max-width: 790px;
   margin: 0;
-  font-size: clamp(34px, 6vw, 68px);
-  line-height: 1.02;
-  letter-spacing: -0.065em;
+  font-size: clamp(34px, 5.4vw, 62px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
 }
 
 .lead {
@@ -205,6 +205,10 @@ h1 {
   cursor: pointer;
 }
 
+.roles .role-card:last-child {
+  grid-column: 1 / -1;
+}
+
 .role-card input,
 .option input {
   position: absolute;
@@ -213,6 +217,9 @@ h1 {
 }
 
 .role-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   min-height: 148px;
   padding: 20px;
   border: 1px solid var(--line);
@@ -228,10 +235,12 @@ h1 {
   display: block;
   margin-bottom: 8px;
   font-size: 21px;
+  line-height: 1.25;
   letter-spacing: -0.03em;
 }
 
 .role-body span {
+  display: block;
   color: var(--muted);
   font: 14px/1.65 "PingFang SC", sans-serif;
 }
@@ -348,9 +357,13 @@ select:focus {
 
 .actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   margin-top: 28px;
+}
+
+.actions .ghost {
+  margin-right: auto;
 }
 
 button {
@@ -443,7 +456,55 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 
+  .role-body {
+    min-height: auto;
+  }
+
+  .actions {
+    align-items: stretch;
+  }
+
   .card {
     min-height: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  h1 {
+    font-size: clamp(32px, 9.4vw, 38px);
+    line-height: 1.12;
+    letter-spacing: -0.018em;
+  }
+
+  .hero,
+  .card,
+  .steps {
+    border-radius: 24px;
+  }
+
+  .steps {
+    align-items: center;
+  }
+
+  .step {
+    min-width: auto;
+    padding: 10px;
+  }
+
+  .step:not(.active) {
+    grid-template-columns: 28px;
+  }
+
+  .step:not(.active) span:last-child {
+    display: none;
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .actions .ghost {
+    margin-right: 0;
   }
 }
